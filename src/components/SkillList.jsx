@@ -3,20 +3,17 @@ import React from 'react';
 
 function SkillList() {
   return (
-    <section className="bg-gradient-to-r from-teal-400 to-purple-500 p-6 rounded-xl shadow-xl text-white mt-6">
-      <h2 className="text-3xl font-bold mb-4 text-center">Compétences</h2>
+    <section className="skill-list bg-gray-800 text-white p-6 rounded-lg shadow-md w-full sm:w-1/2 md:w-1/3">
+      <h2 className="text-2xl font-semibold text-gray-100 mb-4">Compétences</h2>
       <ul className="space-y-4">
-        <li className="flex items-center space-x-3 p-4 bg-white text-gray-800 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
-          <span className="text-xl font-semibold">JavaScript</span>
-          <span className="ml-auto text-gray-500">Niveau : Intermédiaire</span>
+        <li className="flex items-center space-x-3 p-4 bg-gray-700 text-blue-300 rounded-lg shadow-md hover:bg-gray-600 transition duration-300">
+          <span className="text-lg">JavaScript - Niveau : Intermédiaire</span>
         </li>
-        <li className="flex items-center space-x-3 p-4 bg-white text-gray-800 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
-          <span className="text-xl font-semibold">React</span>
-          <span className="ml-auto text-gray-500">Niveau : Avancé</span>
+        <li className="flex items-center space-x-3 p-4 bg-gray-700 text-blue-300 rounded-lg shadow-md hover:bg-gray-600 transition duration-300">
+          <span className="text-lg">React - Niveau : Avancé</span>
         </li>
-        <li className="flex items-center space-x-3 p-4 bg-white text-gray-800 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
-          <span className="text-xl font-semibold">Node.js</span>
-          <span className="ml-auto text-gray-500">Niveau : Débutant</span>
+        <li className="flex items-center space-x-3 p-4 bg-gray-700 text-blue-300 rounded-lg shadow-md hover:bg-gray-600 transition duration-300">
+          <span className="text-lg">Node.js - Niveau : Débutant</span>
         </li>
       </ul>
     </section>

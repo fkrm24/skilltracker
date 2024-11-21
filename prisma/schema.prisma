@@ -1,0 +1,60 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String
+
+  skills    Skill[]
+      
+}
+
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String
+  level     Int      @default(0) // Niveau de compétence, 0 par défaut
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  goals     Goal[]
+}
+
+model Goal {
+  id          Int      @id @default(autoincrement())
+  description String
+  createdAt   DateTime @default(now())
+  completed   Boolean  @default(false)
+
+  skillId     Int
+  skill       Skill    @relation(fields: [skillId], references: [id])
+  tasks       Task[]
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  description String
+  completed   Boolean  @default(false)
+  dueDate     DateTime?
+
+  goalId      Int
+  goal        Goal     @relation(fields: [goalId], references: [id])
+}
+
+
+
+
+
+
