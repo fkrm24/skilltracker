@@ -1,10 +1,10 @@
-'use client'; 
+'use client'; // Nécessaire pour les hooks React dans Next.js
 
-import React, { useState } from 'react'; 
-import { useRouter } from 'next/navigation'; // Pour la navigation
-import Link from 'next/link'; // Pour les liens
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';  // Si tu veux rediriger après l'inscription
+import Link from 'next/link';  // Pour le lien vers la page de login
 
-export default function Signup() {
+export default function SignUp() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [username, setUsername] = useState('');
@@ -14,12 +14,21 @@ export default function Signup() {
     event.preventDefault();
 
     try {
-      
       if (username && password) {
-        console.log('Nouvel utilisateur créé:', { username, password });
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
 
-        
-        router.push('/login');
+        const result = await response.json();
+
+        if (response.ok) {
+          // Rediriger l'utilisateur après inscription
+          router.push('/login');
+        } else {
+          setError(result.error || 'Une erreur s\'est produite.');
+        }
       } else {
         setError('Veuillez remplir tous les champs.');
       }

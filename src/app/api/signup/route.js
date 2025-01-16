@@ -1,10 +1,11 @@
-'use server'; 
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export async function handleSignUp(username, password) {
+export async function POST(request) {
+  const { username, password } = await request.json();
+
   try {
     // Vérification si l'utilisateur existe déjà
     const existingUser = await prisma.user.findUnique({
@@ -12,7 +13,10 @@ export async function handleSignUp(username, password) {
     });
 
     if (existingUser) {
-      throw new Error('Nom d’utilisateur déjà pris');
+      return new Response(
+        JSON.stringify({ error: 'Nom d’utilisateur déjà pris' }),
+        { status: 400 }
+      );
     }
 
     // Hachage du mot de passe pour le stockage sécurisé
@@ -26,8 +30,14 @@ export async function handleSignUp(username, password) {
       },
     });
 
-    return newUser;
+    return new Response(
+      JSON.stringify({ message: 'Utilisateur créé avec succès', user: newUser }),
+      { status: 200 }
+    );
   } catch (error) {
-    throw new Error('Erreur lors de l\'inscription: ' + error.message);
+    return new Response(
+      JSON.stringify({ error: 'Erreur lors de l\'inscription: ' + error.message }),
+      { status: 500 }
+    );
   }
 }

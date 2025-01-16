@@ -2,21 +2,26 @@ import { useState } from 'react';
 
 export default function SkillModal({ onClose, onAddSkill }) {
   const [newSkill, setNewSkill] = useState('');
+  const [level, setLevel] = useState(0); // État pour le niveau
   const [error, setError] = useState('');
 
   // Valider et ajouter une compétence
-  const handleAddSkill = (event) => {
-    event.preventDefault();
-
-    if (!newSkill.trim()) {
-      setError('Veuillez entrer une compétence valide.');
-      return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      if (newSkill && level >= 0) {
+        await onAddSkill({ name: newSkill, level });
+        setNewSkill(''); // Réinitialiser le champ de la compétence
+        setLevel(0); // Réinitialiser le niveau
+      } else {
+        setError('Veuillez remplir tous les champs.');
+      }
+    } catch (error) {
+      setError(error.message);
     }
-
-    onAddSkill(newSkill);
-    setNewSkill('');
-    setError('');
   };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
@@ -24,9 +29,9 @@ export default function SkillModal({ onClose, onAddSkill }) {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Nouvelle compétence
         </h2>
-        <form onSubmit={handleAddSkill}>
+        <form onSubmit={handleSubmit}>
           {/* Input for New Skill */}
-          <div>
+          <div className="mb-4">
             <label
               htmlFor="newSkill"
               className="block text-sm font-medium text-gray-700"
@@ -39,6 +44,25 @@ export default function SkillModal({ onClose, onAddSkill }) {
               type="text"
               value={newSkill}
               onChange={(e) => setNewSkill(e.target.value)}
+              required
+              className="mt-2 p-3 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
+          {/* Input for Skill Level */}
+          <div className="mb-4">
+            <label
+              htmlFor="skillLevel"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Niveau (0 - 100)
+            </label>
+            <input
+              id="skillLevel"
+              name="skillLevel"
+              type="number"
+              value={level}
+              onChange={(e) => setLevel(Number(e.target.value))}
               required
               className="mt-2 p-3 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
