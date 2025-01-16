@@ -1,33 +1,28 @@
-// pages/index.js
 // src/app/page.js
-import React from 'react';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
-import SkillList from '../components/SkillList';
-import TaskOverview from '../components/TaskOverview';
+'use client';
 
-export default function Dashboard() {
+import Link from 'next/link';
+
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main content */}
-      <div className="flex-1 p-8 overflow-auto bg-white shadow-lg rounded-lg mx-4">
-        {/* Header */}
-        <Header />
-
-        {/* Skill List Section */}
-        <div className="mt-6">
-          <SkillList />
-        </div>
-
-        {/* Task Overview Section */}
-        <div className="mt-6">
-          <TaskOverview />
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Bienvenue sur SkillTracker</h2>
+        <div className="text-center">
+          <Link
+            href="/login"
+            className="block w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+          >
+            Se connecter
+          </Link>
+          <Link
+            href="/signup"
+            className="block w-full py-3 px-4 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            S'inscrire
+          </Link>
         </div>
       </div>
     </div>
   );
 }
-

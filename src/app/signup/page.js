@@ -1,0 +1,77 @@
+'use client'; 
+
+import React, { useState } from 'react'; 
+import { useRouter } from 'next/navigation'; // Pour la navigation
+import Link from 'next/link'; // Pour les liens
+
+export default function Signup() {
+  const router = useRouter();
+  const [error, setError] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      
+      if (username && password) {
+        console.log('Nouvel utilisateur créé:', { username, password });
+
+        
+        router.push('/login');
+      } else {
+        setError('Veuillez remplir tous les champs.');
+      }
+    } catch (err) {
+      setError("Une erreur s'est produite, veuillez réessayer.");
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">Créer un compte</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-600">Nom d'utilisateur</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-600">Mot de passe</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          <button
+            type="submit"
+            className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-md shadow-md hover:opacity-90 transition"
+          >
+            S'inscrire
+          </button>
+        </form>
+        <p className="mt-4 text-center text-gray-600">
+          Déjà un compte ?{' '}
+          <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+            Connectez-vous ici
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}

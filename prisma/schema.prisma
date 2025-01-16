@@ -13,11 +13,9 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  email     String   @unique
-  name      String
-
-  skills    Skill[]
-      
+  username  String   @unique
+  password  String
+  skill       Skill[] 
 }
 
 
