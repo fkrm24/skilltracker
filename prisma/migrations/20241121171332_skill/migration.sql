@@ -8,15 +8,7 @@ CREATE TABLE "Skill" (
     CONSTRAINT "Skill_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateTable
-CREATE TABLE "Goal" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "description" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "completed" BOOLEAN NOT NULL DEFAULT false,
-    "skillId" INTEGER NOT NULL,
-    CONSTRAINT "Goal_skillId_fkey" FOREIGN KEY ("skillId") REFERENCES "Skill" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
+
 
 -- CreateTable
 CREATE TABLE "Task" (
@@ -24,6 +16,6 @@ CREATE TABLE "Task" (
     "description" TEXT NOT NULL,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "dueDate" DATETIME,
-    "goalId" INTEGER NOT NULL,
-    CONSTRAINT "Task_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "skillId" INTEGER NOT NULL,
+    CONSTRAINT "Task_skillId_fkey" FOREIGN KEY ("skillId") REFERENCES "Skill" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );

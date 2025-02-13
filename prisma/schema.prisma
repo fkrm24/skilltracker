@@ -27,28 +27,17 @@ model Skill {
 
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  goals     Goal[]
-}
-
-model Goal {
-  id          Int      @id @default(autoincrement())
-  description String
-  createdAt   DateTime @default(now())
-  completed   Boolean  @default(false)
-
-  skillId     Int
-  skill       Skill    @relation(fields: [skillId], references: [id])
-  tasks       Task[]
+  tasks     Task[] 
 }
 
 model Task {
   id          Int      @id @default(autoincrement())
   description String
   completed   Boolean  @default(false)
-  dueDate     DateTime?
+  dueDate     DateTime
 
-  goalId      Int
-  goal        Goal     @relation(fields: [goalId], references: [id])
+  skillId     Int     
+  Skill       Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
 }
 
 

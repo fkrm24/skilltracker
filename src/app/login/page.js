@@ -1,8 +1,8 @@
-'use client'; // Nécessaire pour les hooks React dans Next.js
+'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Pour la redirection après connexion
-import Link from 'next/link'; // Pour le lien vers la page d'inscription
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Login() {
   const router = useRouter();
@@ -21,18 +21,18 @@ export default function Login() {
           body: JSON.stringify({ username, password }),
         });
 
-        // Lire une seule fois la réponse JSON
         const result = await response.json();
 
         if (response.ok) {
-          localStorage.setItem('username', result.user.username); // Sauvegarder le nom de l'utilisateur
-          router.push('/dashboard'); // Rediriger vers le Dashboard
+          localStorage.setItem('username', result.user.username);
+          router.push('/skills'); 
         } else {
-          setError(result.error || 'Nom d’utilisateur ou mot de passe incorrect.');
+          setError(result.error || "Nom d'utilisateur ou mot de passe incorrect.");
         }
       } else {
-        setError('Veuillez remplir tous les champs.');
+        setError("Veuillez remplir tous les champs.");
       }
+
     } catch (err) {
       setError("Une erreur s'est produite, veuillez réessayer.");
     }
@@ -55,6 +55,7 @@ export default function Login() {
               className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div className="mb-6">
             <label htmlFor="password" className="block text-gray-600">Mot de passe</label>
             <input
@@ -67,6 +68,7 @@ export default function Login() {
               className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
+
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             type="submit"
@@ -75,6 +77,7 @@ export default function Login() {
             Se connecter
           </button>
         </form>
+
         <p className="mt-4 text-center text-gray-600">
           Pas encore de compte ?{' '}
           <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">

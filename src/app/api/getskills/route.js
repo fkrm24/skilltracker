@@ -1,16 +1,27 @@
-// /src/app/api/getskills/route.js
 import { NextResponse } from 'next/server';
-import prisma from '../../../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const skills = await prisma.skill.findMany(); // Récupère toutes les compétences
+    const skills = await prisma.skill.findMany({
+      where: {
+        userId: 1 // ID utilisateur fixe
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
     return NextResponse.json(skills);
   } catch (error) {
-    console.error('Erreur lors de la récupération des compétences :', error);
+    console.error('Erreur lors de la récupération des compétences:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des compétences.' },
+      { error: 'Erreur lors de la récupération des compétences' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -19,3 +19,39 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Styles globaux pour les champs de saisie */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+textarea {
+  @apply text-gray-900 !important;  /* Force la couleur du texte en noir foncé */
+}
+
+/* Style pour le texte du placeholder */
+input::placeholder,
+textarea::placeholder {
+  @apply text-gray-500 !important;  /* Couleur gris moyen pour le placeholder */
+}
+
+/* Style spécifique pour les champs de saisie en mode sombre */
+@media (prefers-color-scheme: dark) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="search"],
+  textarea {
+    @apply text-white !important;  /* Texte blanc en mode sombre */
+    @apply bg-gray-800 !important; /* Fond sombre pour les inputs */
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-400 !important;  /* Placeholder plus clair en mode sombre */
+  }
+}
