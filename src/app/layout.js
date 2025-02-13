@@ -56,9 +56,7 @@ export default function RootLayout({ children }) {
                 <li>
                   <Link href="/calendar" className="text-white text-lg font-medium hover:text-gray-200 transition-all duration-300">Calendar</Link>
                 </li>
-                <li>
-                  <Link href="/tasks" className="text-white text-lg font-medium hover:text-gray-200 transition-all duration-300">Tasks</Link>
-                </li>
+               
               </ul>
               <div className="flex items-center space-x-4">
                 <button 

@@ -2,20 +2,68 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET(req) {
-    const { searchParams } = new URL(req.url);
-    const skillId = parseInt(searchParams.get('skillId'));
+    try {
+      const { searchParams } = new URL(req.url);
+      const skillId = searchParams.get('skillId');
   
-    console.log('skillId:', skillId); // Déboguer ici
+      // Récupérer l'utilisateur connecté (userId fixe pour le moment)
+      const userId = 1;
   
-    if (!skillId) {
-      return new Response(JSON.stringify({ error: 'ID de compétence requis' }), { status: 400 });
+      let whereClause = {};
+  
+      if (skillId) {
+        // Si un skillId spécifique est demandé, vérifier qu'il appartient à l'utilisateur
+        const skill = await prisma.skill.findFirst({
+          where: {
+            id: parseInt(skillId),
+            userId: userId
+          }
+        });
+  
+        if (!skill) {
+          return new Response(JSON.stringify({
+            error: 'Compétence non trouvée ou non autorisée'
+          }), { status: 404 });
+        }
+  
+        // Utiliser le skillId spécifique
+        whereClause.skillId = parseInt(skillId);
+      } else {
+        // Si aucun skillId n'est spécifié, récupérer les tâches de toutes les compétences de l'utilisateur
+        const userSkills = await prisma.skill.findMany({
+          where: { userId: userId },
+          select: { id: true }
+        });
+  
+        whereClause.skillId = { in: userSkills.map(skill => skill.id) };
+      }
+  
+      const tasks = await prisma.task.findMany({
+        where: whereClause,
+        include: {
+          Skill: true
+        },
+        orderBy: {
+          dueDate: 'asc'
+        }
+      });
+  
+      return new Response(JSON.stringify(tasks), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (error) {
+      console.error('Erreur détaillée lors de la récupération des tâches:', error);
+      return new Response(JSON.stringify({
+        error: 'Erreur lors de la récupération des tâches',
+        details: error.message
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } finally {
+      await prisma.$disconnect();
     }
-  
-    const tasks = await prisma.task.findMany({
-      where: { skillId: skillId },
-    });
-  
-    return new Response(JSON.stringify(tasks), { status: 200 });
   }
   
 

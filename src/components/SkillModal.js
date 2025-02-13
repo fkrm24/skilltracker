@@ -1,19 +1,26 @@
 import { useState } from 'react';
 
-export default function SkillModal({ onClose, onAddSkill }) {
-  const [newSkill, setNewSkill] = useState('');
-  const [level, setLevel] = useState(0); // État pour le niveau
+export default function SkillModal({ onClose, onAddSkill, onUpdateSkill, initialSkill }) {
+  const [newSkill, setNewSkill] = useState(initialSkill ? initialSkill.name : '');
+  const [level, setLevel] = useState(initialSkill ? initialSkill.level : 0); // État pour le niveau
   const [error, setError] = useState('');
 
   // Valider et ajouter une compétence
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       if (newSkill && level >= 0) {
-        await onAddSkill({ name: newSkill, level });
-        setNewSkill(''); // Réinitialiser le champ de la compétence
-        setLevel(0); // Réinitialiser le niveau
+        if (initialSkill) {
+          // Mode modification
+          await onUpdateSkill(initialSkill.id, { name: newSkill, level });
+          onClose();
+        } else {
+          // Mode ajout
+          await onAddSkill({ name: newSkill, level });
+          setNewSkill(''); // Réinitialiser le champ de la compétence
+          setLevel(0); // Réinitialiser le niveau
+        }
       } else {
         setError('Veuillez remplir tous les champs.');
       }
@@ -27,7 +34,7 @@ export default function SkillModal({ onClose, onAddSkill }) {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Nouvelle compétence
+          {initialSkill ? 'Modifier la compétence' : 'Nouvelle compétence'}
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Input for New Skill */}
@@ -84,7 +91,7 @@ export default function SkillModal({ onClose, onAddSkill }) {
               type="submit"
               className="py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
             >
-              Ajouter
+              {initialSkill ? 'Modifier' : 'Ajouter'}
             </button>
           </div>
         </form>

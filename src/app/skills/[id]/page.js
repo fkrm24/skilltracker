@@ -1,24 +1,41 @@
 'use client'; 
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TaskModal from '../../../components/TaskModal';
 
 export default function SkillDetails() {
+  const router = useRouter();
   const { id } = useParams(); 
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [skillName, setSkillName] = useState('');
 
   useEffect(() => {
     fetchTasks();
+    fetchSkillName();
   }, [id]);
+
+  const fetchSkillName = async () => {
+    try {
+      const response = await fetch(`/api/getskills`);
+      const skills = await response.json();
+      const skill = skills.find(s => s.id === parseInt(id));
+      if (skill) {
+        setSkillName(skill.name);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nom de la compétence:', error);
+    }
+  };
 
   const fetchTasks = async () => {
     const response = await fetch(`/api/tasks?skillId=${id}`);
     const data = await response.json();
     setTasks(data);
+    return data;
   };
 
   const addTask = async (taskData) => {
@@ -47,6 +64,10 @@ export default function SkillDetails() {
     }
   };
 
+  const checkAllTasksCompleted = (tasks) => {
+    return tasks.length > 0 && tasks.every(task => task.completed);
+  };
+
   const toggleTaskCompletion = async (taskId, currentStatus) => {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
@@ -61,9 +82,21 @@ export default function SkillDetails() {
         throw new Error('Erreur lors de la mise à jour de la tâche');
       }
 
-      setTasks(tasks.map(task =>
+      // Mettre à jour l'état local des tâches
+      const updatedTasks = tasks.map(task =>
         task.id === taskId ? { ...task, completed: !currentStatus } : task
-      ));
+      );
+      setTasks(updatedTasks);
+
+      // Vérifier si toutes les tâches sont terminées
+      if (checkAllTasksCompleted(updatedTasks)) {
+        // Stocker l'information pour les confettis
+        localStorage.setItem('showConfetti', 'true');
+        localStorage.setItem('completedSkill', skillName);
+        
+        // Rediriger vers la page des compétences
+        router.push('/skills');
+      }
     } catch (error) {
       alert(error.message);
     }
