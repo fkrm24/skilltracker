@@ -136,6 +136,46 @@ export default function SkillsPage() {
       alert("Impossible de supprimer la compétence.");
     }
   };
+  
+  // Mettre à jour une compétence
+const handleUpdateSkill = async (skillId, updatedSkill) => {
+  if (!username) {
+    alert('Vous devez être connecté pour modifier une compétence.');
+    router.push('/login');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/updateskill', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...updatedSkill,
+        id: skillId
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de la modification de la compétence');
+    }
+
+    setSkills((prevSkills) =>
+      prevSkills.map((skill) =>
+        skill.id === skillId ? data.skill : skill
+      )
+    );
+    setEditingSkill(null);
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la compétence:', error);
+    alert(error.message || 'Impossible de modifier la compétence');
+}
+};
+
 
   if (!username) {
     return <div className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 p-6 flex items-center justify-center">
@@ -181,14 +221,18 @@ export default function SkillsPage() {
         </button>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <SkillModal
-          onClose={() => setIsModalOpen(false)}
-          onAddSkill={handleAddSkill}
-          editingSkill={editingSkill}
-        />
-      )}
+     {/* Modal */}
+{isModalOpen && (
+  <SkillModal
+    onClose={() => {
+      setIsModalOpen(false);
+      setEditingSkill(null);
+    }}
+    onAddSkill={handleAddSkill}
+    onUpdateSkill={handleUpdateSkill}
+    initialSkill={editingSkill}
+  />
+)}
 
       {/* Liste des compétences */}
       <div className="mt-8">

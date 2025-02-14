@@ -2,33 +2,38 @@ import { useState } from 'react';
 
 export default function SkillModal({ onClose, onAddSkill, onUpdateSkill, initialSkill }) {
   const [newSkill, setNewSkill] = useState(initialSkill ? initialSkill.name : '');
-  const [level, setLevel] = useState(initialSkill ? initialSkill.level : 0); // État pour le niveau
+  const [level, setLevel] = useState(initialSkill ? initialSkill.level : 0);
   const [error, setError] = useState('');
 
-  // Valider et ajouter une compétence
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (!newSkill.trim()) {
+      setError('Le nom de la compétence ne peut pas être vide.');
+      return;
+    }
+
+    const numericLevel = parseFloat(level);
+    if (isNaN(numericLevel) || numericLevel < 0 || numericLevel > 100) {
+      setError('Le niveau doit être un nombre entre 0 et 100.');
+      return;
+    }
 
     try {
-      if (newSkill && level >= 0) {
-        if (initialSkill) {
-          // Mode modification
-          await onUpdateSkill(initialSkill.id, { name: newSkill, level });
-          onClose();
-        } else {
-          // Mode ajout
-          await onAddSkill({ name: newSkill, level });
-          setNewSkill(''); // Réinitialiser le champ de la compétence
-          setLevel(0); // Réinitialiser le niveau
-        }
+      if (initialSkill) {
+        await onUpdateSkill(initialSkill.id, { name: newSkill, level: numericLevel });
       } else {
-        setError('Veuillez remplir tous les champs.');
+        await onAddSkill({ name: newSkill, level: numericLevel });
+        setNewSkill('');
+        setLevel(0);
       }
+      onClose();
     } catch (error) {
-      setError(error.message);
+      setError('Erreur lors de l\'enregistrement.');
+      console.error(error);
     }
   };
-  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
@@ -37,17 +42,13 @@ export default function SkillModal({ onClose, onAddSkill, onUpdateSkill, initial
           {initialSkill ? 'Modifier la compétence' : 'Nouvelle compétence'}
         </h2>
         <form onSubmit={handleSubmit}>
-          {/* Input for New Skill */}
+          {/* Input for Skill Name */}
           <div className="mb-4">
-            <label
-              htmlFor="newSkill"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="newSkill" className="block text-sm font-medium text-gray-700">
               Nom de la compétence
             </label>
             <input
               id="newSkill"
-              name="newSkill"
               type="text"
               value={newSkill}
               onChange={(e) => setNewSkill(e.target.value)}
@@ -58,18 +59,16 @@ export default function SkillModal({ onClose, onAddSkill, onUpdateSkill, initial
 
           {/* Input for Skill Level */}
           <div className="mb-4">
-            <label
-              htmlFor="skillLevel"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="skillLevel" className="block text-sm font-medium text-gray-700">
               Niveau (0 - 100)
             </label>
             <input
               id="skillLevel"
-              name="skillLevel"
               type="number"
               value={level}
               onChange={(e) => setLevel(Number(e.target.value))}
+              min="0"
+              max="100"
               required
               className="mt-2 p-3 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -89,7 +88,8 @@ export default function SkillModal({ onClose, onAddSkill, onUpdateSkill, initial
             </button>
             <button
               type="submit"
-              className="py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
+              disabled={!newSkill.trim()}
+              className="py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
               {initialSkill ? 'Modifier' : 'Ajouter'}
             </button>
